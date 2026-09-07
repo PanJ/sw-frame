@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="#สั่งฟ้องสว.">
+  <rect x="3" y="4" width="26" height="26" rx="6" fill="#2400a5"/>
+  <rect x="1" y="2" width="26" height="26" rx="6" fill="#f42f47"/>
+  <g transform="translate(1 2) skewX(-12)" stroke="#fff" stroke-width="3.4" stroke-linecap="round">
+    <path d="M11 5.5 L8.5 20.5"/>
+    <path d="M18 5.5 L15.5 20.5"/>
+    <path d="M5.5 10.5 L20.5 10.5"/>
+    <path d="M4.8 15.5 L19.8 15.5"/>
+  </g>
+</svg>

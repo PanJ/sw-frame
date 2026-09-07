@@ -1,0 +1,10 @@
+{
+  "name": "sang-fong-sw",
+  "version": "1.0.0",
+  "private": true,
+  "description": "ตัวสร้างภาพโปรไฟล์ #สั่งฟ้องสว. — เว็บสแตติกล้วน ทำงานในเบราว์เซอร์ ไม่เก็บข้อมูลผู้ใช้",
+  "scripts": {
+    "dev": "npx --yes serve public -l 4173",
+    "deploy": "npx --yes wrangler@latest pages deploy public --project-name sang-fong-sw"
+  }
+}

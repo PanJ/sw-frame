@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>#สั่งฟ้องสว. — สร้างภาพโปรไฟล์</title>
+<meta name="description" content="สร้างภาพโปรไฟล์ #สั่งฟ้องสว. เพื่อแสดงจุดยืนให้ กกต. ดำเนินการส่งฟ้อง สว. ในคดีโกงเลือก สว. ทำงานในเครื่องคุณทั้งหมด ไม่เก็บข้อมูลผู้ใช้ใด ๆ">
+<meta name="theme-color" content="#f42f47">
+<meta property="og:type" content="website">
+<meta property="og:title" content="#สั่งฟ้องสว. — สร้างภาพโปรไฟล์">
+<meta property="og:description" content="ร่วมสร้างภาพโปรไฟล์ เพื่อแสดงจุดยืนให้ กกต. ดำเนินการส่งฟ้อง สว. ในคดีโกงเลือก สว.">
+<meta property="og:url" content="https://sw-frame.panjs.com/">
+<meta property="og:image" content="https://sw-frame.panjs.com/assets/img/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://sw-frame.panjs.com/">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+<link rel="preload" href="assets/img/logo.png" as="image" fetchpriority="high">
+<link rel="preload" href="assets/fonts/noto-sans-thai-looped-thai-e5072e.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/noto-sans-thai-thai-38af4c.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/css/fonts.css">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<a class="skip-link" href="#app">ข้ามไปยังเครื่องมือสร้างภาพ</a>
+
+<svg class="sprite" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <symbol id="i-shield-check" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" /><path d="m9 12 2 2 4-4" /></symbol>
+  <symbol id="i-frame" viewBox="0 0 24 24"><line x1="22" x2="2" y1="6" y2="6" /><line x1="22" x2="2" y1="18" y2="18" /><line x1="6" x2="6" y1="2" y2="22" /><line x1="18" x2="18" y1="2" y2="22" /></symbol>
+  <symbol id="i-image-plus" viewBox="0 0 24 24"><path d="M16 5h6" /><path d="M19 2v6" /><path d="M21 11.5V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7.5" /><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" /><circle cx="9" cy="9" r="2" /></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" x2="12" y1="15" y2="3" /></symbol>
+  <symbol id="i-share-2" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><line x1="8.59" x2="15.42" y1="13.51" y2="17.49" /><line x1="15.41" x2="8.59" y1="6.51" y2="10.49" /></symbol>
+  <symbol id="i-rotate-cw" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8" /><path d="M21 3v5h-5" /></symbol>
+  <symbol id="i-maximize" viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3" /><path d="M21 8V5a2 2 0 0 0-2-2h-3" /><path d="M3 16v3a2 2 0 0 0 2 2h3" /><path d="M16 21h3a2 2 0 0 0 2-2v-3" /></symbol>
+  <symbol id="i-zoom-in" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" /><line x1="21" x2="16.65" y1="21" y2="16.65" /><line x1="11" x2="11" y1="8" y2="14" /><line x1="8" x2="14" y1="11" y2="11" /></symbol>
+  <symbol id="i-zoom-out" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" /><line x1="21" x2="16.65" y1="21" y2="16.65" /><line x1="8" x2="14" y1="11" y2="11" /></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect width="14" height="14" x="8" y="8" rx="2" ry="2" /><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" /></symbol>
+  <symbol id="i-external-link" viewBox="0 0 24 24"><path d="M15 3h6v6" /><path d="M10 14 21 3" /><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /></symbol>
+  <symbol id="i-move" viewBox="0 0 24 24"><path d="M12 2v20" /><path d="m15 19-3 3-3-3" /><path d="m19 9 3 3-3 3" /><path d="M2 12h20" /><path d="m5 9-3 3 3 3" /><path d="m9 5 3-3 3 3" /></symbol>
+  <symbol id="i-keyboard" viewBox="0 0 24 24"><path d="M10 8h.01" /><path d="M12 12h.01" /><path d="M14 8h.01" /><path d="M16 12h.01" /><path d="M18 8h.01" /><path d="M6 8h.01" /><path d="M7 16h10" /><path d="M8 12h.01" /><rect width="20" height="16" x="2" y="4" rx="2" /></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></symbol>
+  <symbol id="i-image" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2" ry="2" /><circle cx="9" cy="9" r="2" /><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" /></symbol>
+  <symbol id="i-upload" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" x2="12" y1="3" y2="15" /></symbol>
+  <symbol id="i-images" viewBox="0 0 24 24"><path d="M18 22H4a2 2 0 0 1-2-2V6" /><path d="m22 13-1.296-1.296a2.41 2.41 0 0 0-3.408 0L11 18" /><circle cx="12" cy="8" r="2" /><rect width="16" height="16" x="6" y="2" rx="2" /></symbol>
+</svg>
+
+<header class="hero">
+  <div class="wrap">
+    <p class="badge">
+      <svg class="i" aria-hidden="true"><use href="#i-shield-check"/></svg>
+      ทำงานในเครื่องคุณทั้งหมด · ไม่เก็บข้อมูลผู้ใช้ใด ๆ
+    </p>
+    <h1 class="hero__title">
+      <img src="assets/img/logo.png" alt="#สั่งฟ้องสว." width="1400" height="502" fetchpriority="high">
+    </h1>
+    <p class="hero__lead">
+      ร่วมสร้างภาพโปรไฟล์ เพื่อแสดงจุดยืนให้ <strong>กกต.</strong> ดำเนินการส่งฟ้อง <strong>สว.</strong>
+      ในคดีโกงเลือก สว.
+    </p>
+  </div>
+</header>
+
+<main id="app" class="wrap app">
+
+  <section class="panel" aria-labelledby="step-frame">
+    <h2 class="step" id="step-frame">
+      <span class="step__no">1</span>
+      <svg class="i step__i" aria-hidden="true"><use href="#i-frame"/></svg>
+      เลือกเฟรม
+    </h2>
+    <ul class="frames" id="frameList" role="radiogroup" aria-label="เลือกเฟรม"></ul>
+  </section>
+
+  <section class="panel" aria-labelledby="step-photo">
+    <h2 class="step" id="step-photo">
+      <span class="step__no">2</span>
+      <svg class="i step__i" aria-hidden="true"><use href="#i-image-plus"/></svg>
+      ใส่รูปแล้วจัดองค์ประกอบ
+    </h2>
+
+    <div class="stage-wrap">
+      <div class="stage" id="stage">
+        <canvas id="canvas" width="1200" height="1200" tabindex="0"
+                role="img" aria-label="ภาพตัวอย่างพร้อมเฟรม ลากเพื่อขยับ ใช้ลูกกลิ้งเมาส์หรือสองนิ้วเพื่อซูม"></canvas>
+        <div class="drop" id="drop">
+          <div class="drop__inner">
+            <svg class="drop__icon" aria-hidden="true"><use href="#i-upload"/></svg>
+            <p class="drop__title">ลากรูปมาวางที่นี่</p>
+            <p class="drop__sub">หรือกดปุ่มด้านล่างเพื่อเลือกรูปจากเครื่อง</p>
+            <button class="btn btn--primary" type="button" id="pickBtn">
+              <svg class="i" aria-hidden="true"><use href="#i-image-plus"/></svg>
+              เลือกรูปภาพ
+            </button>
+            <p class="drop__note">
+              <svg class="i" aria-hidden="true"><use href="#i-lock"/></svg>
+              รูปของคุณไม่ถูกอัปโหลดไปที่ไหนทั้งสิ้น
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <ul class="hint" id="hint">
+      <li><svg class="i" aria-hidden="true"><use href="#i-move"/></svg> ลากเพื่อขยับ</li>
+      <li><svg class="i" aria-hidden="true"><use href="#i-zoom-in"/></svg> เลื่อนล้อเมาส์หรือใช้สองนิ้วเพื่อซูม</li>
+      <li><svg class="i" aria-hidden="true"><use href="#i-keyboard"/></svg> กดที่ภาพแล้วใช้ปุ่มลูกศรเพื่อขยับละเอียด</li>
+    </ul>
+
+    <div class="controls" id="controls" hidden>
+      <label class="zoom">
+        <span class="zoom__label">ซูม</span>
+        <button class="icon-btn" type="button" id="zoomOut" aria-label="ซูมออก">
+          <svg class="i" aria-hidden="true"><use href="#i-zoom-out"/></svg>
+        </button>
+        <input type="range" id="zoom" min="0" max="1000" value="500" step="1" aria-label="ระดับการซูม">
+        <button class="icon-btn" type="button" id="zoomIn" aria-label="ซูมเข้า">
+          <svg class="i" aria-hidden="true"><use href="#i-zoom-in"/></svg>
+        </button>
+      </label>
+      <div class="controls__row">
+        <button class="btn btn--ghost" type="button" id="rotateBtn">
+          <svg class="i" aria-hidden="true"><use href="#i-rotate-cw"/></svg> หมุน 90°
+        </button>
+        <button class="btn btn--ghost" type="button" id="resetBtn">
+          <svg class="i" aria-hidden="true"><use href="#i-maximize"/></svg> จัดใหม่
+        </button>
+        <button class="btn btn--ghost" type="button" id="changeBtn">
+          <svg class="i" aria-hidden="true"><use href="#i-images"/></svg> เปลี่ยนรูป
+        </button>
+      </div>
+    </div>
+
+    <input type="file" id="file" accept="image/*" hidden>
+  </section>
+
+  <section class="panel" aria-labelledby="step-save">
+    <h2 class="step" id="step-save">
+      <span class="step__no">3</span>
+      <svg class="i step__i" aria-hidden="true"><use href="#i-download"/></svg>
+      บันทึกแล้วเปลี่ยนโปรไฟล์
+    </h2>
+    <div class="save">
+      <button class="btn btn--primary btn--lg" type="button" id="saveBtn" disabled>
+        <svg class="i" aria-hidden="true"><use href="#i-download"/></svg>
+        บันทึกภาพ (PNG 1200×1200)
+      </button>
+      <button class="btn btn--blue btn--lg" type="button" id="shareBtn" hidden>
+        <svg class="i" aria-hidden="true"><use href="#i-share-2"/></svg>
+        แชร์ภาพ
+      </button>
+    </div>
+    <p class="save__note" id="saveNote" role="status"></p>
+    <p class="save__hash">
+      อย่าลืมติดแฮชแท็ก
+      <button class="tag" type="button" id="copyTag" aria-label="คัดลอกแฮชแท็ก #สั่งฟ้องสว.">
+        #สั่งฟ้องสว.
+        <svg class="i" aria-hidden="true"><use href="#i-copy"/></svg>
+      </button>
+    </p>
+  </section>
+</main>
+
+<dialog class="sheet" id="sheet" aria-labelledby="sheetTitle">
+  <h2 id="sheetTitle" class="sheet__title">กดค้างที่ภาพเพื่อบันทึก</h2>
+  <img id="sheetImg" alt="ภาพโปรไฟล์ที่สร้างเสร็จแล้ว" width="1200" height="1200">
+  <button class="btn btn--ghost" type="button" id="sheetClose">ปิด</button>
+</dialog>
+
+<footer class="foot">
+  <div class="wrap foot__grid">
+    <p class="foot__item">
+      <span class="foot__k">
+        <svg class="i" aria-hidden="true"><use href="#i-image"/></svg>
+        ภาพประกอบ
+      </span>
+      ขอบคุณรูปภาพจาก
+      <a href="https://www.ilaw.or.th/articles/58883" target="_blank" rel="noopener noreferrer">
+        iLaw <svg class="i" aria-hidden="true"><use href="#i-external-link"/></svg>
+      </a>
+    </p>
+    <p class="foot__item">
+      <span class="foot__k">
+        <svg class="i" aria-hidden="true"><use href="#i-lock"/></svg>
+        ความเป็นส่วนตัว
+      </span>
+      ไม่เก็บข้อมูลผู้ใช้ใด ๆ ไม่มีระบบติดตามหรือสถิติ ทุกอย่างประมวลผลในเบราว์เซอร์ของคุณ
+      และรูปภาพไม่ถูกส่งขึ้นเซิร์ฟเวอร์
+    </p>
+  </div>
+</footer>
+
+<script src="assets/js/app.js" defer></script>
+</body>
+</html>
