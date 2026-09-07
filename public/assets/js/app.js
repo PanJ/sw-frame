@@ -1,16 +1,42 @@
 /* ---------------------------------------------------------------
    #สั่งฟ้องสว. — ตัวสร้างภาพโปรไฟล์
    ทำงานในเบราว์เซอร์ทั้งหมด ไม่มีการอัปโหลดหรือเก็บข้อมูลใด ๆ
+
+   เฟรมถูกแยกเป็นชิ้นส่วน (มือ / โลโก้) เพื่อให้ลากจัดตำแหน่งแยกกันได้
+   ทุกชิ้นวางในระบบพิกัด 1200×1200 ขนาดเท่าไฟล์จริง จึงวาดแบบ 1:1
 ---------------------------------------------------------------- */
 (() => {
   'use strict';
 
   const SIZE = 1200;              // ขนาดภาพที่บันทึกจริง (px)
+
   const FRAMES = [
-    { id: 'PF-03', src: 'frames/PF-03.png', label: 'นิ้วชี้ + ข้อความด้านขวา' },
-    { id: 'PF-04', src: 'frames/PF-04.png', label: 'ข้อความด้านขวา' },
-    { id: 'PF-05', src: 'frames/PF-05.png', label: 'นิ้วชี้ + ข้อความด้านล่าง' },
-    { id: 'PF-06', src: 'frames/PF-06.png', label: 'ข้อความด้านล่าง' }
+    {
+      id: 'PF-03', label: 'นิ้วชี้ + ข้อความด้านขวา', thumb: 'frames/thumb-PF-03.png',
+      parts: [
+        { key: 'hand', label: 'มือ', src: 'frames/hand-lg.png', x: 132, y: 390, w: 417, h: 357 },
+        { key: 'logo', label: 'โลโก้', src: 'frames/logo-tall.png', x: 623, y: 192, w: 455, h: 821 }
+      ]
+    },
+    {
+      id: 'PF-04', label: 'ข้อความด้านขวา', thumb: 'frames/thumb-PF-04.png',
+      parts: [
+        { key: 'logo', label: 'โลโก้', src: 'frames/logo-tall.png', x: 623, y: 192, w: 455, h: 821 }
+      ]
+    },
+    {
+      id: 'PF-05', label: 'นิ้วชี้ + ข้อความด้านล่าง', thumb: 'frames/thumb-PF-05.png',
+      parts: [
+        { key: 'hand', label: 'มือ', src: 'frames/hand-sm.png', x: 95, y: 317, w: 376, h: 322 },
+        { key: 'logo', label: 'โลโก้', src: 'frames/logo-wide.png', x: 176, y: 753, w: 884, h: 314 }
+      ]
+    },
+    {
+      id: 'PF-06', label: 'ข้อความด้านล่าง', thumb: 'frames/thumb-PF-06.png',
+      parts: [
+        { key: 'logo', label: 'โลโก้', src: 'frames/logo-wide.png', x: 176, y: 753, w: 884, h: 314 }
+      ]
+    }
   ];
 
   const $ = (id) => document.getElementById(id);
@@ -20,6 +46,7 @@
   const fileInput = $('file');
   const zoomInput = $('zoom');
   const controls = $('controls');
+  const targetsEl = $('targets');
   const saveBtn = $('saveBtn');
   const shareBtn = $('shareBtn');
   const saveNote = $('saveNote');
@@ -29,8 +56,9 @@
 
   const view = { scale: 1, x: SIZE / 2, y: SIZE / 2, rot: 0 }; // rot = จำนวนควอเตอร์เทิร์น
   let photo = null;             // ImageBitmap | HTMLImageElement
-  let frameImg = null;
+  let parts = [];               // ชิ้นส่วนของเฟรมที่เลือกอยู่ { def, res, dx, dy }
   let frameIndex = 0;
+  let target = 'photo';         // สิ่งที่ปุ่มลูกศรจะขยับ: 'photo' หรือ key ของชิ้นส่วน
   let noteTimer = 0;
 
   /* ---------------- helpers ---------------- */
@@ -45,13 +73,19 @@
   const minScale = () => containScale() * 0.5;
   const maxScale = () => containScale() * 12;
 
-  /** จำกัดการเลื่อน: ถ้ารูปใหญ่กว่ากรอบจะไม่ยอมให้เกิดขอบว่าง
+  /** จำกัดการเลื่อนรูป: ถ้ารูปใหญ่กว่ากรอบจะไม่ยอมให้เกิดขอบว่าง
       ถ้าเล็กกว่ากรอบจะไม่ยอมให้รูปหลุดออกนอกกรอบ */
   function clampView() {
     const hw = (photoW() * view.scale) / 2;
     const hh = (photoH() * view.scale) / 2;
     view.x = hw >= SIZE / 2 ? clamp(view.x, SIZE - hw, hw) : clamp(view.x, hw, SIZE - hw);
     view.y = hh >= SIZE / 2 ? clamp(view.y, SIZE - hh, hh) : clamp(view.y, hh, SIZE - hh);
+  }
+
+  /** ชิ้นส่วนของเฟรมขยับได้อย่างเดียว (ไม่ย่อ/ขยาย) และต้องอยู่ในกรอบเสมอ */
+  function clampPart(p) {
+    p.dx = clamp(p.dx, -p.def.x, SIZE - p.def.x - p.def.w);
+    p.dy = clamp(p.dy, -p.def.y, SIZE - p.def.y - p.def.h);
   }
 
   function setScale(next, anchor) {
@@ -83,26 +117,88 @@
     syncZoomInput();
   }
 
+  /* ---------------- frame parts ---------------- */
+
+  // แคชรูปชิ้นส่วน พร้อมแคนวาสสำรองไว้อ่านค่า alpha สำหรับทดสอบการคลิก
+  const partCache = new Map();
+
+  function loadPart(src) {
+    if (partCache.has(src)) return partCache.get(src);
+    const res = { img: new Image(), ready: false, hit: null };
+    res.img.decoding = 'async';
+    res.img.onload = () => {
+      res.ready = true;
+      const off = document.createElement('canvas');
+      off.width = res.img.naturalWidth;
+      off.height = res.img.naturalHeight;
+      const hx = off.getContext('2d', { willReadFrequently: true });
+      hx.drawImage(res.img, 0, 0);
+      res.hit = hx;
+      render();
+    };
+    res.img.src = src;
+    partCache.set(src, res);
+    return res;
+  }
+
+  function alphaAt(p, lx, ly) {
+    if (!p.res.hit) return 0;
+    return p.res.hit.getImageData(lx, ly, 1, 1).data[3];
+  }
+
+  /** ชิ้นส่วนบนสุดที่มีเนื้อภาพอยู่ตรงจุดนั้น (ไล่จากชิ้นที่วาดทีหลังก่อน) */
+  function hitPart(pt) {
+    for (let i = parts.length - 1; i >= 0; i--) {
+      const p = parts[i];
+      if (!p.res.ready) continue;
+      const lx = Math.floor(pt.x - (p.def.x + p.dx));
+      const ly = Math.floor(pt.y - (p.def.y + p.dy));
+      if (lx < 0 || ly < 0 || lx >= p.def.w || ly >= p.def.h) continue;
+      if (alphaAt(p, lx, ly) > 20) return p;
+    }
+    return null;
+  }
+
+  const activePart = () => parts.find((p) => p.def.key === target) || null;
+
   /* ---------------- drawing ---------------- */
 
-  function paint(target, size) {
+  function paint(out, size, guides) {
     const k = size / SIZE;
-    target.save();
-    target.fillStyle = '#ffffff';
-    target.fillRect(0, 0, size, size);
+    out.save();
+    out.fillStyle = '#ffffff';
+    out.fillRect(0, 0, size, size);
+
     if (photo) {
-      target.save();
-      target.translate(view.x * k, view.y * k);
-      target.rotate((view.rot * Math.PI) / 2);
-      target.imageSmoothingEnabled = true;
-      target.imageSmoothingQuality = 'high';
+      out.save();
+      out.translate(view.x * k, view.y * k);
+      out.rotate((view.rot * Math.PI) / 2);
+      out.imageSmoothingEnabled = true;
+      out.imageSmoothingQuality = 'high';
       const w = photo.width * view.scale * k;
       const h = photo.height * view.scale * k;
-      target.drawImage(photo, -w / 2, -h / 2, w, h);
-      target.restore();
+      out.drawImage(photo, -w / 2, -h / 2, w, h);
+      out.restore();
     }
-    if (frameImg) target.drawImage(frameImg, 0, 0, size, size);
-    target.restore();
+
+    for (const p of parts) {
+      if (!p.res.ready) continue;
+      out.drawImage(p.res.img, (p.def.x + p.dx) * k, (p.def.y + p.dy) * k, p.def.w * k, p.def.h * k);
+    }
+
+    // เส้นประบอกว่าปุ่มลูกศรกำลังขยับชิ้นไหน — วาดเฉพาะบนจอ ไม่ติดไปในไฟล์ที่บันทึก
+    if (guides && photo) {
+      const p = activePart();
+      if (p) {
+        out.save();
+        out.setLineDash([16, 12]);
+        out.lineWidth = 5;
+        out.strokeStyle = 'rgba(36, 0, 165, .9)';
+        out.strokeRect((p.def.x + p.dx) * k, (p.def.y + p.dy) * k, p.def.w * k, p.def.h * k);
+        out.restore();
+      }
+    }
+    out.restore();
   }
 
   let queued = false;
@@ -111,22 +207,22 @@
     queued = true;
     requestAnimationFrame(() => {
       queued = false;
-      paint(ctx, SIZE);
+      paint(ctx, SIZE, true);
     });
   }
 
-  /* ---------------- frames ---------------- */
+  /* ---------------- frame picker ---------------- */
 
   function loadFrame(index) {
     frameIndex = index;
-    const img = new Image();
-    img.decoding = 'async';
-    img.onload = () => { frameImg = img; render(); };
-    img.src = FRAMES[index].src;
+    parts = FRAMES[index].parts.map((def) => ({ def, res: loadPart(def.src), dx: 0, dy: 0 }));
+    setTarget('photo');
+    buildTargets();
     [...$('frameList').querySelectorAll('button')].forEach((b, i) => {
       b.setAttribute('aria-checked', String(i === index));
       b.tabIndex = i === index ? 0 : -1;
     });
+    render();
   }
 
   function buildFrameList() {
@@ -138,7 +234,7 @@
       btn.setAttribute('role', 'radio');
       btn.setAttribute('aria-checked', String(i === 0));
       btn.title = f.label;
-      btn.innerHTML = `<img src="${f.src}" alt="${f.label}" width="1200" height="1200" loading="lazy">`;
+      btn.innerHTML = `<img src="${f.thumb}" alt="${f.label}" width="320" height="320" loading="lazy">`;
       btn.addEventListener('click', () => loadFrame(i));
       btn.addEventListener('keydown', (e) => {
         const dir = e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1
@@ -151,6 +247,38 @@
       });
       li.appendChild(btn);
       list.appendChild(li);
+    });
+  }
+
+  /* ---------------- ตัวเลือกว่าปุ่มลูกศรจะขยับอะไร ---------------- */
+
+  function buildTargets() {
+    const group = targetsEl.querySelector('.targets__group');
+    group.innerHTML = '';
+    const options = [{ key: 'photo', label: 'รูปภาพ' }]
+      .concat(FRAMES[frameIndex].parts.map((d) => ({ key: d.key, label: d.label })));
+    options.forEach((o) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'chip';
+      b.setAttribute('role', 'radio');
+      b.dataset.key = o.key;
+      b.textContent = o.label;
+      b.addEventListener('click', () => setTarget(o.key));
+      group.appendChild(b);
+    });
+    syncTargets();
+  }
+
+  function setTarget(key) {
+    target = key;
+    syncTargets();
+    render();
+  }
+
+  function syncTargets() {
+    targetsEl.querySelectorAll('.chip').forEach((b) => {
+      b.setAttribute('aria-checked', String(b.dataset.key === target));
     });
   }
 
@@ -202,6 +330,7 @@
 
   const pointers = new Map();
   let pinchStart = null;
+  let dragPart = null;          // ชิ้นส่วนที่กำลังลาก (null = ลากรูปภาพ)
 
   const toDesign = (e) => {
     const r = canvas.getBoundingClientRect();
@@ -211,21 +340,38 @@
 
   canvas.addEventListener('pointerdown', (e) => {
     if (!photo) return;
-    canvas.setPointerCapture(e.pointerId);
+    // จับ pointer ไว้กับแคนวาส เพื่อให้ลากออกนอกกรอบแล้วยังตามต่อได้
+    try { canvas.setPointerCapture(e.pointerId); } catch (err) { /* ไม่จับก็ยังลากได้ */ }
     pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
-    if (pointers.size === 2) startPinch();
+    if (pointers.size === 1) {
+      dragPart = hitPart(toDesign(e));
+      setTarget(dragPart ? dragPart.def.key : 'photo');
+    } else if (pointers.size === 2) {
+      dragPart = null;          // สองนิ้ว = ซูมรูปภาพเสมอ
+      startPinch();
+    }
   });
 
   canvas.addEventListener('pointermove', (e) => {
-    if (!photo || !pointers.has(e.pointerId)) return;
+    if (!photo) return;
+    if (!pointers.has(e.pointerId)) { updateCursor(e); return; }
+
     const prev = pointers.get(e.pointerId);
     pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
 
     if (pointers.size === 1) {
       const s = designPerPx();
-      view.x += (e.clientX - prev.x) * s;
-      view.y += (e.clientY - prev.y) * s;
-      clampView();
+      const dx = (e.clientX - prev.x) * s;
+      const dy = (e.clientY - prev.y) * s;
+      if (dragPart) {
+        dragPart.dx += dx;
+        dragPart.dy += dy;
+        clampPart(dragPart);
+      } else {
+        view.x += dx;
+        view.y += dy;
+        clampView();
+      }
       render();
     } else if (pointers.size === 2 && pinchStart) {
       const [a, b] = [...pointers.values()];
@@ -243,11 +389,17 @@
 
   const endPointer = (e) => {
     pointers.delete(e.pointerId);
-    pinchStart = pointers.size === 2 ? startPinch() : null;
+    if (pointers.size < 2) pinchStart = null;
+    if (pointers.size === 0) dragPart = null;
+    if (pointers.size === 2) startPinch();
   };
   canvas.addEventListener('pointerup', endPointer);
   canvas.addEventListener('pointercancel', endPointer);
   canvas.addEventListener('lostpointercapture', endPointer);
+
+  function updateCursor(e) {
+    canvas.style.cursor = hitPart(toDesign(e)) ? 'move' : 'grab';
+  }
 
   function startPinch() {
     const [a, b] = [...pointers.values()];
@@ -270,7 +422,7 @@
     setScale(view.scale * Math.exp(-step * 0.0015), toDesign(e));
   }, { passive: false });
 
-  canvas.addEventListener('dblclick', () => { if (photo) { fitPhoto(); render(); } });
+  canvas.addEventListener('dblclick', () => { if (photo) resetAll(); });
 
   canvas.addEventListener('keydown', (e) => {
     if (!photo) return;
@@ -280,9 +432,15 @@
     };
     if (moves[e.key]) {
       e.preventDefault();
-      view.x += moves[e.key][0];
-      view.y += moves[e.key][1];
-      clampView();
+      const [dx, dy] = moves[e.key];
+      const p = activePart();
+      if (p) {
+        p.dx += dx; p.dy += dy;
+        clampPart(p);
+      } else {
+        view.x += dx; view.y += dy;
+        clampView();
+      }
       render();
     } else if (e.key === '+' || e.key === '=') {
       e.preventDefault();
@@ -335,7 +493,7 @@
 
   $('zoomIn').addEventListener('click', () => setScale(view.scale * 1.15, null));
   $('zoomOut').addEventListener('click', () => setScale(view.scale / 1.15, null));
-  $('resetBtn').addEventListener('click', () => { fitPhoto(); render(); });
+  $('resetBtn').addEventListener('click', resetAll);
   $('rotateBtn').addEventListener('click', () => {
     if (!photo) return;
     view.rot = (view.rot + 1) % 4;
@@ -345,12 +503,20 @@
     render();
   });
 
+  /** คืนค่าทั้งรูปภาพและตำแหน่งชิ้นส่วนของเฟรม */
+  function resetAll() {
+    parts.forEach((p) => { p.dx = 0; p.dy = 0; });
+    setTarget('photo');
+    fitPhoto();
+    render();
+  }
+
   /* ---------------- export ---------------- */
 
   function exportCanvas() {
     const out = document.createElement('canvas');
     out.width = out.height = SIZE;
-    paint(out.getContext('2d'), SIZE);
+    paint(out.getContext('2d'), SIZE, false);
     return out;
   }
 
